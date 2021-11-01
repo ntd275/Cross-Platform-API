@@ -208,6 +208,7 @@ postsController.show = async (req, res, next) => {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({message: error.message});
     }
 }
+
 postsController.delete = async (req, res, next) => {
     try {
         let post = await PostModel.findByIdAndDelete(req.params.id);
@@ -241,6 +242,9 @@ postsController.list = async (req, res, next) => {
                 },
             });
         } else {
+            const user = await UserModel.findById(userId);
+            const blockedDiaryList = user.blocked_diary ? user.blocked_diary : [];
+            // console.log(blockedDiaryList)
             // get list friend of 1 user
             let friends = await FriendModel.find({
                 status: "1",
@@ -253,16 +257,16 @@ postsController.list = async (req, res, next) => {
                 }
             ])
             let listIdFriends = [];
-            console.log(friends)
+            // console.log(friends)
             for (let i = 0; i < friends.length; i++) {
                 if (friends[i].sender.toString() === userId.toString()) {
-                    listIdFriends.push(friends[i].receiver);
+                    if(blockedDiaryList.includes(friends[i].receiver)) listIdFriends.push(friends[i].receiver);
                 } else {
-                    listIdFriends.push(friends[i].sender);
+                    if(blockedDiaryList.includes(friends[i].sender)) listIdFriends.push(friends[i].sender);
                 }
             }
             listIdFriends.push(userId);
-            console.log(listIdFriends);
+            // console.log(listIdFriends);
             // get post of friends of 1 user
             posts = await PostModel.find({
                 "author": listIdFriends
