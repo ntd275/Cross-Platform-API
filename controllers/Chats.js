@@ -146,7 +146,7 @@ chatController.saveMessage = async (msg) => {
                 chat.seens[i] = false;
             }
         }
-        chat.seens = seens;
+        chat.seens = [false, false];
         chat.save();
     } catch (e) {
         console.log(e);
