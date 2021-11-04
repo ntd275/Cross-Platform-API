@@ -100,6 +100,7 @@ chatController.getMessages = async (req, res, next) => {
 chatController.saveMessage = async (msg) => {
     try {
         let chat = null;
+        let needUpdate = true;
         if (msg.chatId) {
             chat = chat = await ChatModel.findOne({
                 $and: [
@@ -118,13 +119,14 @@ chatController.saveMessage = async (msg) => {
                 ]
             });
         }
-
+        
         if (!chat) {
             chat = new  ChatModel({
                 messsages: [],
                 members: [msg.senderId, msg.receiverId] ,
                 seens: [true, false],
             });
+            needUpdate = false;
         }
 
         // console.log(chat)
@@ -137,15 +139,18 @@ chatController.saveMessage = async (msg) => {
         await message.save();
         chat.messsages.push(message);
         await chat.save();
-        let seens = [false, false];
-        for(let i =0; i< chat.members.length; i++){
-            if(chat.members[i] != msg.senderId){
-                seens[i] = false;
-            }else{
-                seens[i] = true;
+        
+        if(needUpdate){
+            let seens = [false, false];
+            for(let i =0; i< chat.members.length; i++){
+                if(chat.members[i] != msg.senderId){
+                    seens[i] = false;
+                }else{
+                    seens[i] = true;
+                }
             }
+            await ChatModel.updateOne({_id: chat._id}, {seens: seens});
         }
-        await ChatModel.updateOne({_id: chat._id}, {seens: seens});
     } catch (e) {
         console.log(e);
     }
