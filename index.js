@@ -47,6 +47,7 @@ app.listen(PORT, () => {
 })
 
 var socketIds = {};
+var mapSocketIds = {};
 
 // Socket.io chat realtime
 io.on('connection', (socket) => {
@@ -54,16 +55,22 @@ io.on('connection', (socket) => {
     //     socket.emit('output-messages', result)
     // })
     console.log('a user connected: ', socket.handshake.headers);
+    console.log(socket.id);
     if(socket.handshake.headers.token){
         try {
             decoded = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET);
-            socketIds[decoded.id] = socket.id;
+            if(socketIds[decoded.id]){
+                socketIds[decoded.id].push(socket.id);
+            }else{
+                socketIds[decoded.id] = [socket.id];
+            }
+            mapSocketIds[socket.id] = decoded.id;
         } catch (e) {
             console.log("Invalid token")
         }
     }
     socket.emit('message', 'Hello world');
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (socket) => {
         console.log('user disconnected: ');
     });
     socket.on('chatmessage', msg => {
