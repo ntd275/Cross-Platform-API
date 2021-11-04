@@ -107,7 +107,7 @@ chatController.saveMessage = async (msg) => {
                     { members: { $all: [msg.senderId, msg.receiverId] } },
                     { members: { $size: 2 } }
                 ]
-            }).populate('seens');
+            });
         }
 
         if (!chat) {
@@ -116,14 +116,14 @@ chatController.saveMessage = async (msg) => {
                     { members: { $all: [msg.senderId, msg.receiverId] } },
                     { members: { $size: 2 } }
                 ]
-            }).populate('seens');
+            });
         }
 
         if (!chat) {
             chat = new  ChatModel({
                 messsages: [],
                 members: [msg.senderId, msg.receiverId] ,
-                seens: [true, true],
+                seens: [true, false],
             });
         }
 
@@ -136,19 +136,16 @@ chatController.saveMessage = async (msg) => {
         });
         await message.save();
         chat.messsages.push(message);
+        await chat.save();
         let seens = [false, false];
         for(let i =0; i< chat.members.length; i++){
             if(chat.members[i] != msg.senderId){
-                console.log(i);
-                console.log(chat.members[i] + "   - -- "+ msg.senderId);
-                chat.seens[i] = false;
+                seens[i] = false;
             }else{
-                chat.seens[i] = false;
+                seens[i] = true;
             }
         }
-        chat.seens = [false, false];
-        chat.populate()
-        chat.save();
+        await ChatModel.findOneAndUpdate({_id: chat._id}, {seens: seens});
     } catch (e) {
         console.log(e);
     }
