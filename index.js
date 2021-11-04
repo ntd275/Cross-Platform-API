@@ -13,6 +13,7 @@ const chatServer = http.createServer(app2);
 const { Server } = require("socket.io");
 const io = new Server(chatServer);
 const jwt = require("jsonwebtoken");
+const chatController = require("./controllers/Chats");
 // const MessageModel = require("../models/Messages");
 
 // connect to mongodb
@@ -79,11 +80,23 @@ io.on('connection', (socket) => {
         }
         console.log(socketIds[userId])
     });
-    socket.on('chatmessage', msg => {
-        // const message = new MessageModel({ msg });
-        message.save().then(() => {
-            io.emit('message', msg)
-        })
+    socket.on('chatmessage', async (msg) => {
+        if (msg.token && msg.receiverId) {
+            try {
+                decoded = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET);
+                msg.senderId = decoded.id;
+                delete msg.token;
+                await chatController.saveMessage(msg);
+                for(let i = 0; i< socketIds[msg.senderId].length; i++){
+                    io.to(socketIds[msg.senderId][i]).emit('message', msg);
+                }
+                for(let i = 0; i< socketIds[msg.receiverId].length; i++){
+                    io.to(socketIds[msg.receiverId][i]).emit('message', msg);
+                }
+            } catch (e) {
+                console.log("Invalid token chatting")
+            }
+        }
     })
 });
 

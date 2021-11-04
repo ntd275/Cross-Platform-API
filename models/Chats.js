@@ -9,10 +9,22 @@ const chatsSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    member: [
+    messsages: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Messages"
+        }
+    ],
+    members: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Users"
+        }
+    ],
+    seens: [
+        {
+            type: Boolean,
+            require: false
         }
     ],
     type: {

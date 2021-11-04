@@ -27,11 +27,11 @@ chatController.send = async (req, res, next) => {
                 }
             } else {
                 chat = new ChatModel({
-                   type: PRIVATE_CHAT,
-                   member: [
-                       receivedId,
-                       userId
-                   ]
+                    type: PRIVATE_CHAT,
+                    member: [
+                        receivedId,
+                        userId
+                    ]
                 });
                 await chat.save();
                 chatIdSend = chat._id;
@@ -94,6 +94,55 @@ chatController.getMessages = async (req, res, next) => {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             message: e.message
         });
+    }
+}
+
+chatController.saveMessage = async (msg) => {
+    try {
+        let chat = null;
+        if (msg.chatId) {
+            chat = chat = await ChatModel.findOne({
+                $and: [
+                    { _id: msg.chatId },
+                    { members: { $all: [msg.senderId, msg.receiverId] } },
+                    { members: { $size: 2 } }
+                ]
+            });
+        }
+
+        if (!chat) {
+            chat = await ChatModel.findOne({
+                $and: [
+                    { members: { $all: [msg.senderId, msg.receiverId] } },
+                    { members: { $size: 2 } }
+                ]
+            });
+        }
+
+        if (!chat) {
+            chat = new ChatModel({
+                messages: [],
+                members: [msg.senderId, msg.receiverId] ,
+                seens: [true, true],
+            });
+        }
+
+        let message = new MessagesModel({
+            time: new Date(),
+            senderId: msg.senderId,
+            receiverId: msg.receiverId,
+            content: msg.content,
+        });
+        await message.save();
+        chat.messages.push(message);
+        for(let i =0; i< chat.members.length; i++){
+            if(chat.members[i] !== msg.senderId){
+                chat.seens[i] = false;
+            }
+        }
+        chat.save();
+    } catch (e) {
+        console.log(e);
     }
 }
 
