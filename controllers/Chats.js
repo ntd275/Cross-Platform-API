@@ -136,9 +136,12 @@ chatController.saveMessage = async (msg) => {
         });
         await message.save();
         chat.messsages.push(message);
+        console.log(chat.members)
         for(let i =0; i< chat.members.length; i++){
             if(chat.members[i] != msg.senderId){
                 chat.seens[i] = false;
+            }else{
+                chat.seens[i] = true;
             }
         }
         chat.save();
