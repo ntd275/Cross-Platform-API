@@ -70,8 +70,8 @@ io.on('connection', (socket) => {
         }
     }
     socket.emit('message', 'Hello world');
-    socket.on('disconnect', (socket) => {
-        console.log('user disconnected: ');
+    socket.on('disconnect', () => {
+        console.log('user disconnected: ' + socket.id);
     });
     socket.on('chatmessage', msg => {
         // const message = new MessageModel({ msg });
