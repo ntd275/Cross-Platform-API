@@ -127,7 +127,7 @@ chatController.saveMessage = async (msg) => {
             });
         }
 
-        console.log(chat)
+        // console.log(chat)
         let message = new MessagesModel({
             time: msg.time,
             senderId: msg.senderId,
@@ -136,9 +136,9 @@ chatController.saveMessage = async (msg) => {
         });
         await message.save();
         chat.messsages.push(message);
-        console.log(chat.members)
         for(let i =0; i< chat.members.length; i++){
             if(chat.members[i] != msg.senderId){
+                console.log(chat.members[i] + "   - -- "+ msg.senderId);
                 chat.seens[i] = false;
             }else{
                 chat.seens[i] = true;
