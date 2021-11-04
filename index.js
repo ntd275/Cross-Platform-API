@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
     // MessageModel.find().then(result => {
     //     socket.emit('output-messages', result)
     // })
-    console.log('a user connected');
+    console.log('a user connected: ' + socket.id);
     socket.emit('message', 'Hello world');
     socket.on('disconnect', () => {
         console.log('user disconnected');
