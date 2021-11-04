@@ -145,7 +145,7 @@ chatController.saveMessage = async (msg) => {
                 seens[i] = true;
             }
         }
-        await ChatModel.findOneAndUpdate({_id: chat._id}, {seens: seens});
+        await ChatModel.updateOne({_id: chat._id}, {seens: seens});
     } catch (e) {
         console.log(e);
     }
