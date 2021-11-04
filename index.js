@@ -55,7 +55,7 @@ io.on('connection', (socket) => {
     // MessageModel.find().then(result => {
     //     socket.emit('output-messages', result)
     // })
-    // console.log('a user connected: ', socket.handshake.headers);
+    console.log('a user connected: ', socket.id);
     // console.log(socket.id);
     if (socket.handshake.headers.token) {
         try {
