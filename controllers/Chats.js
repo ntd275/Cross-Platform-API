@@ -14,10 +14,10 @@ chatController.getMessages = async (req, res, next) => {
                 { _id: req.params.chatId },
                 { members: req.userId }
             ]
-        }).populate('messeges');
+        }).populate('messsages');
         if(chat !== null){
             return res.status(httpStatus.OK).json({
-                data: chat
+                data: chat.messsages
             });
         }else{
             return res.status(httpStatus.NOT_FOUND).json({message: "Not found conversation!"});
