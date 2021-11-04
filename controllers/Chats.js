@@ -9,7 +9,7 @@ const chatController = {};
 
 chatController.getMessages = async (req, res, next) => {
     try {
-        let chat = await ChatModel.findOnce({
+        let chat = await ChatModel.findOne({
             $and: [
                 { _id: req.params.chatId },
                 { members: req.userId }
