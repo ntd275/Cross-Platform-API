@@ -72,8 +72,8 @@ io.on('connection', (socket) => {
     socket.emit('message', 'Hello world');
     socket.on('disconnect', () => {
         console.log('user disconnected: ' + socket.id);
-        let userId = mapSocketIds[socketIds];
-        var index = socketIds[userId].indexOf(item);
+        let userId = mapSocketIds[socket.id];
+        var index = socketIds[userId].indexOf(socket.id);
         if (index !== -1) {
             socketIds[userId].splice(index, 1);
         }
