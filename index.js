@@ -12,6 +12,7 @@ const http = require('http');
 const chatServer = http.createServer(app2);
 const { Server } = require("socket.io");
 const io = new Server(chatServer);
+const jwt = require("jsonwebtoken");
 // const MessageModel = require("../models/Messages");
 
 // connect to mongodb
@@ -52,7 +53,15 @@ io.on('connection', (socket) => {
     // MessageModel.find().then(result => {
     //     socket.emit('output-messages', result)
     // })
-    console.log('a user connected: ' + socket.handshake.auth.token);
+    console.log('a user connected: ');
+    if(socket.handshake.auth && socket.handshake.auth.token){
+        try {
+            decoded = jwt.verify(socket.handshake.auth.token, process.env.JWT_SECRET);
+            console.log(decoded)
+        } catch (e) {
+            console.log("Invalid token")
+        }
+    }
     socket.emit('message', 'Hello world');
     socket.on('disconnect', () => {
         console.log('user disconnected');
