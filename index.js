@@ -60,7 +60,7 @@ io.on('connection', (socket) => {
     if (socket.handshake.headers.token) {
         try {
             decoded = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET);
-            if (socketIds[decoded.id]) {
+            if (socketIds[decoded.id] && socketIds[decoded.id] > 0) {
                 socketIds[decoded.id].push(socket.id);
             } else {
                 socketIds[decoded.id] = [socket.id];
