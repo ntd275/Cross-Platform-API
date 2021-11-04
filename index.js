@@ -6,7 +6,10 @@ const mainRouter = require("./routes/index");
 const {PORT} = require("./constants/constants");
 const {MONGO_URI} = require("./constants/constants");
 const bodyParser = require('body-parser');
-const io = require('socket.io')(3000)
+const app = express();
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 // const MessageModel = require("../models/Messages");
 
 // connect to mongodb
@@ -20,7 +23,7 @@ mongoose.connect(MONGO_URI, {
     .catch(err => {
         console.log(err);
     })
-const app = express();
+
 // use middleware to parse body req to json
 
 
