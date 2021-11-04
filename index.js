@@ -46,25 +46,25 @@ app.listen(PORT, () => {
     console.log("server start - " + PORT);
 })
 
-const socketIds = {};
+var socketIds = {};
 
 // Socket.io chat realtime
 io.on('connection', (socket) => {
     // MessageModel.find().then(result => {
     //     socket.emit('output-messages', result)
     // })
-    console.log('a user connected: ');
+    console.log('a user connected: ', socket.handshake.auth);
     if(socket.handshake.auth && socket.handshake.auth.token){
         try {
             decoded = jwt.verify(socket.handshake.auth.token, process.env.JWT_SECRET);
-            console.log(decoded)
+            socketIds[decoded.id] = socket.id;
         } catch (e) {
             console.log("Invalid token")
         }
     }
     socket.emit('message', 'Hello world');
     socket.on('disconnect', () => {
-        console.log('user disconnected');
+        console.log('user disconnected: ');
     });
     socket.on('chatmessage', msg => {
         // const message = new MessageModel({ msg });
