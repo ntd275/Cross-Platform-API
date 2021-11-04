@@ -120,7 +120,7 @@ chatController.saveMessage = async (msg) => {
         }
 
         if (!chat) {
-            chat = new ChatModel({
+            chat =  ChatModel({
                 messages: [],
                 members: [msg.senderId, msg.receiverId] ,
                 seens: [true, true],
