@@ -56,7 +56,7 @@ io.on('connection', (socket) => {
     //     socket.emit('output-messages', result)
     // })
     // console.log('a user connected: ', socket.handshake.headers);
-    console.log(socket.id);
+    // console.log(socket.id);
     if (socket.handshake.headers.token) {
         try {
             decoded = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET);
