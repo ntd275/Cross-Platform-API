@@ -14,6 +14,7 @@ const { Server } = require("socket.io");
 const io = new Server(chatServer);
 const jwt = require("jsonwebtoken");
 const chatController = require("./controllers/Chats");
+const { Socket } = require('dgram');
 // const MessageModel = require("../models/Messages");
 
 // connect to mongodb
@@ -63,7 +64,8 @@ io.on('connection', (socket) => {
             if (socketIds[decoded.id] && socketIds[decoded.id] > 0) {
                 socketIds[decoded.id].push(socket.id);
             } else {
-                socketIds[decoded.id] = [socket.id];
+                socketIds[decoded.id] = [];
+                socketIds[decoded.id].push(socket.id);
             }
             mapSocketIds[socket.id] = decoded.id;
         } catch (e) {
@@ -74,9 +76,15 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         // console.log('user disconnected: ' + socket.id);
         let userId = mapSocketIds[socket.id];
-        var index = socketIds[userId].indexOf(socket.id);
-        if (index !== -1) {
-            socketIds[userId].splice(index, 1);
+        if(socketIds[userId]){
+            for(let i = 0; i< socketIds[userId].length; i++){
+                if(socketIds[userId][i] == socket.id){
+                    socketIds[userId].splice(i, 1);
+                }
+            }
+        }
+
+            
         }
         // console.log(socketIds[userId])
     });
