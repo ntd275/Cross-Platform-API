@@ -33,14 +33,19 @@ chatController.getMessages = async (req, res, next) => {
 chatController.getChats = async (req, res, next) => {
     try {
         let chats = await ChatModel.find({ members: req.userId }).populate('members');
-
+        let results  = [];
         for (let i = 0; i < chats.length; i++) {
-            chats[i].lastMessage = await MessagesModel.findOne({ _id: chats[i].messsages[chats[i].messsages.length - 1] });
-            delete chats[i].messsages;
+            let res = {
+                lastMessage: null,
+                members: chats[i].members,
+                seens: chats[i].seens,
+            };
+            res.lastMessage = await MessagesModel.findOne({ _id: chats[i].messsages[chats[i].messsages.length - 1] });
+            results.push(res);
         }
 
         return res.status(httpStatus.OK).json({
-            data: chats
+            data: results
         });
 
     } catch (e) {
