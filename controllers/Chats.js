@@ -119,6 +119,14 @@ chatController.saveMessage = async (msg) => {
             });
         }
 
+        if (!chat) {
+            chat = new  ChatModel({
+                messsages: [],
+                members: [msg.senderId, msg.receiverId] ,
+                seens: [true, true],
+            });
+        }
+
         console.log(chat)
         let message = new MessagesModel({
             time: msg.time,
@@ -127,18 +135,7 @@ chatController.saveMessage = async (msg) => {
             content: msg.content,
         });
         await message.save();
-
-        if (!chat) {
-            chat = new ChatModel({
-                messages: [message],
-                members: [msg.senderId, msg.receiverId] ,
-                seens: [true, false],
-            });
-            chat.save();
-            return;
-        }
-
-        chat.messages.push(message);
+        chat.messsages.push(message);
         for(let i =0; i< chat.members.length; i++){
             if(chat.members[i] !== msg.senderId){
                 chat.seens[i] = false;
