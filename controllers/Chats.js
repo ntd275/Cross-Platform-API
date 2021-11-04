@@ -36,6 +36,7 @@ chatController.getChats = async (req, res, next) => {
 
         for (let i = 0; i < chats.length; i++) {
             chats[i].lastMessage = await MessagesModel.findOne({ _id: chats[i].messsages[chats[i].messsages.length - 1] });
+            delete chats[i].messsages;
         }
 
         return res.status(httpStatus.OK).json({
