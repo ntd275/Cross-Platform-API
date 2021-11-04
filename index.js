@@ -53,10 +53,10 @@ io.on('connection', (socket) => {
     // MessageModel.find().then(result => {
     //     socket.emit('output-messages', result)
     // })
-    console.log('a user connected: ', socket.handshake.auth);
-    if(socket.handshake.auth && socket.handshake.auth.token){
+    console.log('a user connected: ', socket.handshake.headers);
+    if(socket.handshake.headers && socket.handshake.headers.token){
         try {
-            decoded = jwt.verify(socket.handshake.auth.token, process.env.JWT_SECRET);
+            decoded = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET);
             socketIds[decoded.id] = socket.id;
         } catch (e) {
             console.log("Invalid token")
