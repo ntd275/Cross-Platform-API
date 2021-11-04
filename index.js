@@ -47,9 +47,9 @@ app.listen(PORT, () => {
 
 // Socket.io chat realtime
 io.on('connection', (socket) => {
-    MessageModel.find().then(result => {
-        socket.emit('output-messages', result)
-    })
+    // MessageModel.find().then(result => {
+    //     socket.emit('output-messages', result)
+    // })
     console.log('a user connected');
     socket.emit('message', 'Hello world');
     socket.on('disconnect', () => {
