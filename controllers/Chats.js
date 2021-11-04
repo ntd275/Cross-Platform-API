@@ -122,4 +122,29 @@ chatController.saveMessage = async (msg) => {
     }
 }
 
+
+chatController.seenMessage = async (msg) => {
+    try {
+        let chat = await ChatModel.findOne({
+            $and: [
+                { _id: msg.chatId },
+                { members: msg.userId }
+            ]
+        }).populate('messsages');
+        if(chat == null){
+            return;
+        }
+        let seens = chat.seens;
+        for(let i = 0; i< chat.members.length; i++){
+            if(chat.members[i]._id == msg.userId){
+                seens[i] = true;
+                break;
+            }
+        }
+        await ChatModel.updateOne({ _id: msg.chatId }, { seens: seens });
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 module.exports = chatController;

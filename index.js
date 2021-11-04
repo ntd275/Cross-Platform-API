@@ -109,6 +109,20 @@ io.on('connection', (socket) => {
             }
         }
     })
+
+    socket.on('seenMessage', async (msg) => {
+        // console.log(msg.token)
+        if (msg.token && msg.chatId) {
+            try {
+                decoded = jwt.verify(msg.token, process.env.JWT_SECRET);
+                msg.userId = decoded.id;
+                delete msg.token;
+                await chatController.seenMessage(msg);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    })
 });
 
 
