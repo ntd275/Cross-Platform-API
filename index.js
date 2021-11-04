@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
         console.log(msg.token)
         if (msg.token && msg.receiverId) {
             try {
-                decoded = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET);
+                decoded = jwt.verify(msg.token, process.env.JWT_SECRET);
                 msg.senderId = decoded.id;
                 delete msg.token;
                 msg.time = new Date();
