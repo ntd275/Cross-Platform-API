@@ -7,10 +7,11 @@ const {PORT} = require("./constants/constants");
 const {MONGO_URI} = require("./constants/constants");
 const bodyParser = require('body-parser');
 const app = express();
+const app2 = express();
 const http = require('http');
-const server = http.createServer(app);
+const chatServer = http.createServer(app2);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(chatServer);
 // const MessageModel = require("../models/Messages");
 
 // connect to mongodb
@@ -61,3 +62,8 @@ io.on('connection', (socket) => {
         })
     })
 });
+
+
+chatServer.listen(3000, () => {
+    console.log("server chat start - " + 3000);
+})
