@@ -81,7 +81,7 @@ io.on('connection', (socket) => {
         // console.log(socketIds[userId])
     });
     socket.on('chatmessage', async (msg) => {
-        console.log(msg)
+        console.log(msg.token)
         if (msg.token && msg.receiverId) {
             try {
                 decoded = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET);
