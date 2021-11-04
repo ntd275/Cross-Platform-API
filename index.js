@@ -83,9 +83,6 @@ io.on('connection', (socket) => {
                 }
             }
         }
-
-            
-        }
         // console.log(socketIds[userId])
     });
     socket.on('chatmessage', async (msg) => {
