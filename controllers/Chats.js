@@ -42,7 +42,7 @@ chatController.getChats = async (req, res, next) => {
                 seen: false,
             };
             for(let j =0; j< chats[i].members.length; j++){
-                if(chats[i].members[j]._id == req.userId){
+                if(chats[i].members[j]._id != req.userId){
                     res.friend = chats[i].members[j];
                     res.seen = chats[i].seens[j];
                 }
