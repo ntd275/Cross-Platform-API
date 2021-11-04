@@ -128,7 +128,7 @@ chatController.saveMessage = async (msg) => {
         }
 
         let message = new MessagesModel({
-            time: new Date(),
+            time: msg.time,
             senderId: msg.senderId,
             receiverId: msg.receiverId,
             content: msg.content,

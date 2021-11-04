@@ -72,20 +72,22 @@ io.on('connection', (socket) => {
     }
     socket.emit('message', 'Hello world');
     socket.on('disconnect', () => {
-        console.log('user disconnected: ' + socket.id);
+        // console.log('user disconnected: ' + socket.id);
         let userId = mapSocketIds[socket.id];
         var index = socketIds[userId].indexOf(socket.id);
         if (index !== -1) {
             socketIds[userId].splice(index, 1);
         }
-        console.log(socketIds[userId])
+        // console.log(socketIds[userId])
     });
     socket.on('chatmessage', async (msg) => {
+        console.log(msg)
         if (msg.token && msg.receiverId) {
             try {
                 decoded = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET);
                 msg.senderId = decoded.id;
                 delete msg.token;
+                msg.time = new Date();
                 await chatController.saveMessage(msg);
                 for(let i = 0; i< socketIds[msg.senderId].length; i++){
                     io.to(socketIds[msg.senderId][i]).emit('message', msg);
