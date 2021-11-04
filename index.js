@@ -96,7 +96,7 @@ io.on('connection', (socket) => {
                     io.to(socketIds[msg.receiverId][i]).emit('message', msg);
                 }
             } catch (e) {
-                console.log("Invalid token chatting")
+                console.log(e);
             }
         }
     })
