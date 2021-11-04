@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
     // MessageModel.find().then(result => {
     //     socket.emit('output-messages', result)
     // })
-    console.log('a user connected: ' + socket.auth);
+    console.log('a user connected: ' + socket.handshake);
     socket.emit('message', 'Hello world');
     socket.on('disconnect', () => {
         console.log('user disconnected');
