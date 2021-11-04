@@ -89,11 +89,15 @@ io.on('connection', (socket) => {
                 delete msg.token;
                 msg.time = new Date();
                 await chatController.saveMessage(msg);
-                for(let i = 0; i< socketIds[msg.senderId].length; i++){
-                    io.to(socketIds[msg.senderId][i]).emit('message', msg);
+                if(socketIds[msg.senderId]){
+                    for(let i = 0; i< socketIds[msg.senderId].length; i++){
+                        io.to(socketIds[msg.senderId][i]).emit('message', msg);
+                    }
                 }
-                for(let i = 0; i< socketIds[msg.receiverId].length; i++){
-                    io.to(socketIds[msg.receiverId][i]).emit('message', msg);
+                if(socketIds[msg.receiverId]){
+                    for(let i = 0; i< socketIds[msg.receiverId].length; i++){
+                        io.to(socketIds[msg.receiverId][i]).emit('message', msg);
+                    }
                 }
             } catch (e) {
                 console.log(e);
