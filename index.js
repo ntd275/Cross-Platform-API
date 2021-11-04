@@ -45,12 +45,14 @@ app.listen(PORT, () => {
     console.log("server start - " + PORT);
 })
 
+const socketIds = {};
+
 // Socket.io chat realtime
 io.on('connection', (socket) => {
     // MessageModel.find().then(result => {
     //     socket.emit('output-messages', result)
     // })
-    console.log('a user connected: ' + socket.id);
+    console.log('a user connected: ' + socket.options);
     socket.emit('message', 'Hello world');
     socket.on('disconnect', () => {
         console.log('user disconnected');
