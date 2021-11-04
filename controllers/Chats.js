@@ -36,10 +36,17 @@ chatController.getChats = async (req, res, next) => {
         let results  = [];
         for (let i = 0; i < chats.length; i++) {
             let res = {
+                chatId: chats[i]._id,
                 lastMessage: null,
-                members: chats[i].members,
-                seens: chats[i].seens,
+                friend: null,
+                seen: false,
             };
+            for(let j =0; j< chats[i].members.length; i++){
+                if(chats[i].members[j]._id == req.userId){
+                    res.friend = chats[i].members[j];
+                    res.seen = chats[i].seens[j];
+                }
+            }
             res.lastMessage = await MessagesModel.findOne({ _id: chats[i].messsages[chats[i].messsages.length - 1] });
             results.push(res);
         }
