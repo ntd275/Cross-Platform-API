@@ -107,7 +107,7 @@ chatController.saveMessage = async (msg) => {
                     { members: { $all: [msg.senderId, msg.receiverId] } },
                     { members: { $size: 2 } }
                 ]
-            });
+            }).populate('seens');
         }
 
         if (!chat) {
@@ -116,7 +116,7 @@ chatController.saveMessage = async (msg) => {
                     { members: { $all: [msg.senderId, msg.receiverId] } },
                     { members: { $size: 2 } }
                 ]
-            });
+            }).populate('seens');
         }
 
         if (!chat) {
@@ -147,6 +147,7 @@ chatController.saveMessage = async (msg) => {
             }
         }
         chat.seens = [false, false];
+        chat.populate()
         chat.save();
     } catch (e) {
         console.log(e);
