@@ -136,15 +136,17 @@ chatController.saveMessage = async (msg) => {
         });
         await message.save();
         chat.messsages.push(message);
+        let seens = [false, false];
         for(let i =0; i< chat.members.length; i++){
             if(chat.members[i] != msg.senderId){
                 console.log(i);
                 console.log(chat.members[i] + "   - -- "+ msg.senderId);
                 chat.seens[i] = false;
             }else{
-                chat.seens[i] = true;
+                chat.seens[i] = false;
             }
         }
+        chat.seens = seens;
         chat.save();
     } catch (e) {
         console.log(e);
