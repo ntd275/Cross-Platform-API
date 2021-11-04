@@ -15,12 +15,12 @@ chatController.getMessages = async (req, res, next) => {
                 { members: req.userId }
             ]
         }).populate('messsages');
-        if(chat !== null){
+        if (chat !== null) {
             return res.status(httpStatus.OK).json({
                 data: chat.messsages
             });
-        }else{
-            return res.status(httpStatus.NOT_FOUND).json({message: "Not found conversation!"});
+        } else {
+            return res.status(httpStatus.NOT_FOUND).json({ message: "Not found conversation!" });
         }
     } catch (e) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
@@ -28,6 +28,27 @@ chatController.getMessages = async (req, res, next) => {
         });
     }
 }
+
+
+chatController.getChats = async (req, res, next) => {
+    try {
+        let chats = await ChatModel.find({ members: req.userId }).populate('members');
+
+        for (let i = 0; i < chats.length; i++) {
+            chats[i].lastMessage = await MessagesModel.findOne({ _id: chats[i].messsages[chats[i].messsages.length - 1] });
+        }
+
+        return res.status(httpStatus.OK).json({
+            data: chats
+        });
+
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+
 
 chatController.saveMessage = async (msg) => {
     try {
