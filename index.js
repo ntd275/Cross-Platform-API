@@ -3,8 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const mainRouter = require("./routes/index");
-const {PORT} = require("./constants/constants");
-const {MONGO_URI} = require("./constants/constants");
+const { PORT } = require("./constants/constants");
+const { MONGO_URI } = require("./constants/constants");
 const bodyParser = require('body-parser');
 const app = express();
 const app2 = express();
@@ -21,8 +21,8 @@ mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
 })
     .then(res => {
-    console.log("connected to mongodb");
-})
+        console.log("connected to mongodb");
+    })
     .catch(err => {
         console.log(err);
     })
@@ -32,8 +32,8 @@ mongoose.connect(MONGO_URI, {
 
 // use middleware to enable cors
 app.use(cors());
-app.use(express.json({limit: "50mb"}));
-app.use(express.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
 // route middleware
 app.use("/", mainRouter);
 
@@ -56,12 +56,12 @@ io.on('connection', (socket) => {
     // })
     console.log('a user connected: ', socket.handshake.headers);
     console.log(socket.id);
-    if(socket.handshake.headers.token){
+    if (socket.handshake.headers.token) {
         try {
             decoded = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET);
-            if(socketIds[decoded.id]){
+            if (socketIds[decoded.id]) {
                 socketIds[decoded.id].push(socket.id);
-            }else{
+            } else {
                 socketIds[decoded.id] = [socket.id];
             }
             mapSocketIds[socket.id] = decoded.id;
@@ -72,6 +72,12 @@ io.on('connection', (socket) => {
     socket.emit('message', 'Hello world');
     socket.on('disconnect', () => {
         console.log('user disconnected: ' + socket.id);
+        let userId = mapSocketIds[socketIds];
+        var index = socketIds[userId].indexOf(item);
+        if (index !== -1) {
+            socketIds[userId].splice(index, 1);
+        }
+        console.log(socketIds[userId])
     });
     socket.on('chatmessage', msg => {
         // const message = new MessageModel({ msg });
