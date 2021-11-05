@@ -32,8 +32,15 @@ chatController.getMessages = async (req, res, next) => {
 
 chatController.getChats = async (req, res, next) => {
     try {
-        let chats = await ChatModel.find({ members: req.userId }).populate('members').populate('members.avatar');
-        let results  = [];
+        let chats = await ChatModel.find({ members: req.userId }).populate({
+            path: 'members',
+            model: 'Users',
+            populate: {
+                path: 'avatar',
+                model: 'Documents'
+            }
+        });
+        let results = [];
         for (let i = 0; i < chats.length; i++) {
             let res = {
                 chatId: chats[i]._id,
@@ -41,10 +48,10 @@ chatController.getChats = async (req, res, next) => {
                 friend: null,
                 seen: false,
             };
-            for(let j =0; j< chats[i].members.length; j++){
-                if(chats[i].members[j]._id != req.userId){
+            for (let j = 0; j < chats[i].members.length; j++) {
+                if (chats[i].members[j]._id != req.userId) {
                     res.friend = chats[i].members[j];
-                    res.seen = chats[i].seens[(j+1)%2];
+                    res.seen = chats[i].seens[(j + 1) % 2];
                 }
             }
             res.lastMessage = await MessagesModel.findOne({ _id: chats[i].messsages[chats[i].messsages.length - 1] });
@@ -133,12 +140,12 @@ chatController.seenMessage = async (msg) => {
                 { members: msg.userId }
             ]
         }).populate('messsages');
-        if(chat == null){
+        if (chat == null) {
             return;
         }
         let seens = chat.seens;
-        for(let i = 0; i< chat.members.length; i++){
-            if(chat.members[i]._id == msg.userId){
+        for (let i = 0; i < chat.members.length; i++) {
+            if (chat.members[i]._id == msg.userId) {
                 seens[i] = true;
                 break;
             }
