@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
             console.log("Invalid token")
         }
     }
-    socket.emit('message', 'Hello world');
+    // socket.emit('message', 'Hello world');
     socket.on('disconnect', () => {
         // console.log('user disconnected: ' + socket.id);
         let userId = mapSocketIds[socket.id];
