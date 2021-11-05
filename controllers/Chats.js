@@ -117,6 +117,8 @@ chatController.saveMessage = async (msg) => {
             }
             await ChatModel.updateOne({ _id: chat._id }, { seens: seens });
         }
+
+        return chat._id;
     } catch (e) {
         console.log(e);
     }
