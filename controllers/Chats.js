@@ -32,7 +32,7 @@ chatController.getMessages = async (req, res, next) => {
 
 chatController.getChats = async (req, res, next) => {
     try {
-        let chats = await ChatModel.find({ members: req.userId }).populate('members');
+        let chats = await ChatModel.find({ members: req.userId }).populate('members').populate('members.avatar');
         let results  = [];
         for (let i = 0; i < chats.length; i++) {
             let res = {
