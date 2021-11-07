@@ -27,6 +27,13 @@ const chatsSchema = new mongoose.Schema({
             require: false
         }
     ],
+    pivots: [
+        {
+            type: Number,
+            require: false,
+        }
+    ]
+    ,
     type: {
         type: String,
         enum: [

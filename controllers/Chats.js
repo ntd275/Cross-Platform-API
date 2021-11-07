@@ -16,8 +16,54 @@ chatController.getMessages = async (req, res, next) => {
             ]
         }).populate('messsages');
         if (chat !== null) {
+            let pivots = chat.pivots;
+            let curPivot = 0;
+            for(let i = 0; i< chat.members.length; i++){
+                if(chat.members[i] == req.userId){
+                    curPivot = pivots[i];
+                    break;
+                }
+            }
+            messsages = chat.messsages;
+            messsages.splice(0, curPivot);
             return res.status(httpStatus.OK).json({
-                data: chat.messsages
+                data: messsages
+            });
+        } else {
+            return res.status(httpStatus.NOT_FOUND).json({ message: "Not found conversation!" });
+        }
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+
+chatController.deleteChat = async (req, res, next) => {
+    try {
+        let chat = await ChatModel.findOne({
+            $and: [
+                { _id: req.params.chatId },
+                { members: req.userId }
+            ]
+        });
+        if (chat != null) {
+            let newPivot = chat.messsages.length;
+            let pivots = chat.pivots;
+            for (let i = 0; i < chat.members.length; i++) {
+                if (chat.members[i] == req.userId) {
+                    pivots[i] = newPivot;
+                    break;
+                }
+            }
+            ChatModel.updateOne({
+                $and: [
+                    { _id: req.params.chatId },
+                    { members: req.userId }
+                ]
+            }, { pivots: pivots });
+            return res.status(httpStatus.OK).json({
+                message: "conversation deleted"
             });
         } else {
             return res.status(httpStatus.NOT_FOUND).json({ message: "Not found conversation!" });
@@ -48,11 +94,17 @@ chatController.getChats = async (req, res, next) => {
                 friend: null,
                 seen: false,
             };
+            let curPivot = 0;
             for (let j = 0; j < chats[i].members.length; j++) {
                 if (chats[i].members[j]._id != req.userId) {
                     res.friend = chats[i].members[j];
                     res.seen = chats[i].seens[(j + 1) % 2];
+                }else{
+                    curPivot= chats[i].pivots[j];
                 }
+            }
+            if(curPivot >= chats[i].messsages.length){
+                continue;
             }
             res.lastMessage = await MessagesModel.findOne({ _id: chats[i].messsages[chats[i].messsages.length - 1] });
             results.push(res);
@@ -98,6 +150,7 @@ chatController.saveMessage = async (msg) => {
                 messsages: [],
                 members: [msg.senderId, msg.receiverId],
                 seens: [true, false],
+                pivots: [0, 0],
             });
             needUpdate = false;
         }
