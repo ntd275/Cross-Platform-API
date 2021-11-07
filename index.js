@@ -68,6 +68,7 @@ io.on('connection', (socket) => {
                 socketIds[decoded.id].push(socket.id);
             }
             mapSocketIds[socket.id] = decoded.id;
+            console.log('a user connected, account devices: ' + socketIds[decoded.id]);
         } catch (e) {
             console.log("Invalid token")
         }
@@ -82,7 +83,7 @@ io.on('connection', (socket) => {
                 }
             }
         }
-        console.log('a user disconnected, account device left: ' + socketIds[userId]);
+   
         // console.log(socketIds[userId])
     });
     socket.on('chatmessage', async (msg) => {
