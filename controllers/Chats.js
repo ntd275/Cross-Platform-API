@@ -56,7 +56,7 @@ chatController.deleteChat = async (req, res, next) => {
                     break;
                 }
             }
-            ChatModel.updateOne({
+            await ChatModel.updateOne({
                 $and: [
                     { _id: req.params.chatId },
                     { members: req.userId }
