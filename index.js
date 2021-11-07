@@ -56,7 +56,7 @@ io.on('connection', (socket) => {
     // MessageModel.find().then(result => {
     //     socket.emit('output-messages', result)
     // })
-    console.log('a user connected: ', socket.id);
+    // console.log('a user connected: ', socket.id);
     // console.log(socket.id);
     if (socket.handshake.headers.token) {
         try {
@@ -74,7 +74,6 @@ io.on('connection', (socket) => {
     }
     // socket.emit('message', 'Hello world');
     socket.on('disconnect', () => {
-        // console.log('user disconnected: ' + socket.id);
         let userId = mapSocketIds[socket.id];
         if(socketIds[userId]){
             for(let i = 0; i< socketIds[userId].length; i++){
@@ -83,6 +82,7 @@ io.on('connection', (socket) => {
                 }
             }
         }
+        console.log('a user disconnected, account device left: ' + socketIds[userId]);
         // console.log(socketIds[userId])
     });
     socket.on('chatmessage', async (msg) => {
