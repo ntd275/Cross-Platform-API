@@ -273,6 +273,11 @@ usersController.show = async (req, res, next) => {
 usersController.setBlock = async (req, res, next) => {
     try {
         let targetId = req.body.user_id;
+        if (targetId == req.userId) {
+            return res.status(httpStatus.BAD_REQUEST).json({
+                message: "Không thể tự chặn bản thân"
+            });
+        }
         let type = req.body.type;
         let user = await UserModel.findById(req.userId);
         blocked = []
@@ -310,6 +315,11 @@ usersController.setBlock = async (req, res, next) => {
 usersController.setBlockDiary = async (req, res, next) => {
     try {
         let targetId = req.body.user_id;
+        if (targetId == req.userId) {
+            return res.status(httpStatus.BAD_REQUEST).json({
+                message: "Không thể tự chặn bản thân"
+            });
+        }
         let type = req.body.type;
         let user = await UserModel.findById(req.userId);
         blocked = []
