@@ -233,7 +233,6 @@ friendsController.listRequests = async (req, res, next) => {
         }
 
         res.status(200).json({
-            code: 200,
             data: {
                 sentList,
                 receivedList
