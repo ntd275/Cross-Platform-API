@@ -3,8 +3,8 @@ const UserModel = require("../models/Users");
 const FriendModel = require("../models/Friends");
 const httpStatus = require("../utils/httpStatus");
 const bcrypt = require("bcrypt");
-const {JWT_SECRET} = require("../constants/constants");
-const {ROLE_CUSTOMER} = require("../constants/constants");
+const { JWT_SECRET } = require("../constants/constants");
+const { ROLE_CUSTOMER } = require("../constants/constants");
 const friendsController = {};
 
 // 0: gửi lời mời
@@ -31,7 +31,7 @@ friendsController.setRequest = async (req, res, next) => {
         }
 
         let isFriend = await FriendModel.findOne({ sender: sender, receiver: receiver });
-        if(isFriend != null){
+        if (isFriend != null) {
             if (isFriend.status == '1') {
                 return res.status(200).json({
                     code: 200,
@@ -47,7 +47,7 @@ friendsController.setRequest = async (req, res, next) => {
                 message: "Gửi lời mời kết bạn thành công",
             });
 
-        }else{
+        } else {
             let status = 0;
             const makeFriend = new FriendModel({ sender: sender, receiver: receiver, status: status });
             makeFriend.save();
@@ -67,9 +67,9 @@ friendsController.setRequest = async (req, res, next) => {
 friendsController.getRequest = async (req, res, next) => {
     try {
         let receiver = req.userId;
-        let requested = await FriendModel.find({receiver: receiver, status: "0" }).distinct('sender')
+        let requested = await FriendModel.find({ receiver: receiver, status: "0" }).distinct('sender')
         let users = await UserModel.find().where('_id').in(requested).populate('avatar').populate('cover_image').exec()
-   
+
         res.status(200).json({
             code: 200,
             message: "Danh sách lời mời kết bạn",
@@ -172,8 +172,8 @@ friendsController.setRemoveFriend = async (req, res, next) => {
 friendsController.listFriends = async (req, res, next) => {
     try {
         if (req.body.user_id == null) {
-            let requested = await FriendModel.find({sender: req.userId, status: "1" }).distinct('receiver')
-            let accepted = await FriendModel.find({receiver: req.userId, status: "1" }).distinct('sender')
+            let requested = await FriendModel.find({ sender: req.userId, status: "1" }).distinct('receiver')
+            let accepted = await FriendModel.find({ receiver: req.userId, status: "1" }).distinct('sender')
 
             let users = await UserModel.find().where('_id').in(requested.concat(accepted)).populate('avatar').populate('cover_image').exec()
 
@@ -192,6 +192,62 @@ friendsController.listFriends = async (req, res, next) => {
         });
     }
 }
+
+
+friendsController.listRequests = async (req, res, next) => {
+    try {
+        let list = await FriendModel.find({
+            $and: [
+                {
+                    $or: [
+                        { sender: req.userId },
+                        { receiver: req.userId }
+                    ]
+                },
+                { status: "0" }
+            ]
+        }).populate({
+            path: 'sender',
+            model: 'Users',
+            populate: {
+                path: 'avatar',
+                model: 'Documents'
+            }
+        }).populate({
+            path: 'receiver',
+            model: 'Users',
+            populate: {
+                path: 'avatar',
+                model: 'Documents'
+            }
+        })
+
+        let sentList = [];
+        let receivedList = [];
+        for(let i =0; i<list.length; i++){
+            if(list[i].sender._id == req.userId){
+                sentList.push(list[i]);
+            }else{
+                receivedList.push(list[i]);
+            }
+        }
+
+        res.status(200).json({
+            code: 200,
+            data: {
+                sentList,
+                receivedList
+            }
+        });
+
+
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+
 
 
 module.exports = friendsController;
