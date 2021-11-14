@@ -35,7 +35,7 @@ searchController.search = async (req, res, next) => {
             }
         }
 
-        friendList = UserModel.find({
+        friendList = await UserModel.find({
             $and: [
                 { _id: { $in: friendIds } },
                 {
@@ -47,7 +47,7 @@ searchController.search = async (req, res, next) => {
             ]
         }).populate('avatar');
 
-        peopleList = UserModel.find({
+        peopleList = await UserModel.find({
             $and: [
                 { _id: { $nin: friendIds } },
                 {
@@ -59,7 +59,7 @@ searchController.search = async (req, res, next) => {
             ]
         }).populate('avatar');
 
-        let messages = MessagesModel.find({
+        let messages = await MessagesModel.find({
             $and: [
                 {
                     $or: [
@@ -85,14 +85,14 @@ searchController.search = async (req, res, next) => {
             }
         });
 
-        for(let i = 0; i< messages.length; i++){
+        for (let i = 0; i < messages.length; i++) {
             let message = {};
             message.content = messages[i].content;
             message.time = messages[i].time;
             message.chatId = messages[i].chatId;
-            if(messages[i].senderId._id == userId){
+            if (messages[i].senderId._id == userId) {
                 message["friend"] = messages[i].receiverId;
-            }else{
+            } else {
                 message["friend"] = messages[i].senderId;
             }
 
