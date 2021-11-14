@@ -45,7 +45,7 @@ searchController.search = async (req, res, next) => {
                     ]
                 }
             ]
-        }).populate('avatar');
+        }).populate('avatar').limit(10);
 
         peopleList = await UserModel.find({
             $and: [
@@ -57,7 +57,7 @@ searchController.search = async (req, res, next) => {
                     ]
                 }
             ]
-        }).populate('avatar');
+        }).populate('avatar').limit(5);
 
         let messages = await MessagesModel.find({
             $and: [
@@ -83,7 +83,7 @@ searchController.search = async (req, res, next) => {
                 path: 'avatar',
                 model: 'Documents'
             }
-        });
+        }).limit(10);
 
         for (let i = 0; i < messages.length; i++) {
             let message = {};
