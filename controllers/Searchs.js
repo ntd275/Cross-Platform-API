@@ -2,8 +2,8 @@ const ChatModel = require("../models/Chats");
 const FriendModel = require("../models/Friends");
 const Messages = require("../models/Messages");
 const MessagesModel = require("../models/Messages");
-const Users = require("../models/Users");
 const httpStatus = require("../utils/httpStatus");
+const UserModel = require("../models/Users");
 const searchController = {};
 
 searchController.search = async (req, res, next) => {
