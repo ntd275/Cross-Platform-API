@@ -29,7 +29,7 @@ const auth = async (req, res, next) => {
     req.userId = userId;
     next();
   } catch (err) {
-      return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({message: error.message});
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({message: err.message});
   }
 };
 
