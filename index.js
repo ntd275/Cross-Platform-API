@@ -21,6 +21,9 @@ const { Socket } = require('dgram');
 mongoose.connect(MONGO_URI, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
+	user: 'Zalo',
+	pass: 'ZaloAdminPassword',
+	db: 'Zalo',
 })
     .then(res => {
         console.log("connected to mongodb");
