@@ -161,6 +161,7 @@ chatController.saveMessage = async (msg) => {
             senderId: msg.senderId,
             receiverId: msg.receiverId,
             content: msg.content,
+            chatId: chat._id
         });
         await message.save();
         chat.messsages.push(message);

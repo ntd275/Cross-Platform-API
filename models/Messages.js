@@ -6,16 +6,20 @@ const messagesSchema = new mongoose.Schema({
         required: false
     },
     senderId: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Users"
     },
     receiverId: {
-        type: String,
-        required: true
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Users"
     },
     content: {
         type: String,
         required: false
+    },
+    chatId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Chats"
     }
 });
 messagesSchema.set('timestamps', true);

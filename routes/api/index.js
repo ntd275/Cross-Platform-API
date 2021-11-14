@@ -6,6 +6,7 @@ const postLikeRoutes = require("../PostLike");
 const postReportRoutes = require("../PostReport");
 const postsRoutes = require("../Posts");
 const chatsRoutes = require("../Chats");
+const searchRoutes = require("../Searchs");
 
 const apiRoutes = express.Router();
 
@@ -15,8 +16,9 @@ apiRoutes.use("/postComment", postCommentRoutes);
 apiRoutes.use("/postLike", postLikeRoutes);
 apiRoutes.use("/postReport", postReportRoutes);
 apiRoutes.use("/posts", postsRoutes);
-apiRoutes.use("/chats", chatsRoutes)
-
+apiRoutes.use("/chats", chatsRoutes);
+apiRoutes.use("/chats", chatsRoutes);
+apiRoutes.use("/search", searchRoutes);
 
 apiRoutes.get(
     "/", (req, res) => res.json({ api: "is-working" })
