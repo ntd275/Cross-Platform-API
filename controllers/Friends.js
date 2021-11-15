@@ -264,7 +264,7 @@ friendsController.friendStatus = async (req, res, next) => {
         })
 
         let status = "";
-        if (friendRecord == null) {
+        if (friendRecord === null) {
             status = "not friend"
         } if (friendRecord.status == "1") {
             status = "friend"
