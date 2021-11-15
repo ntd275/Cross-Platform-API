@@ -266,7 +266,7 @@ friendsController.friendStatus = async (req, res, next) => {
         let status = "";
         if (friendRecord === null) {
             status = "not friend"
-        } if (friendRecord.status == "1") {
+        }else if (friendRecord.status == "1") {
             status = "friend"
         } else {
             if (friendRecord.sender == req.userId) {
