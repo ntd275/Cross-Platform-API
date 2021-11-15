@@ -18,7 +18,13 @@ const { Socket } = require('dgram');
 // const MessageModel = require("../models/Messages");
 
 // connect to mongodb
-mongoose.connect("mongodb://Zalo:ZaloAdminPassword@127.0.0.1:27017/Zalo")
+mongoose.connect(MONGO_URI, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+	user: 'Zalo',
+	pass: 'ZaloAdminPassword',
+	dbName: 'Zalo',
+})
     .then(res => {
         console.log("connected to mongodb");
     })
