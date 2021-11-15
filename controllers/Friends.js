@@ -224,10 +224,10 @@ friendsController.listRequests = async (req, res, next) => {
 
         let sentList = [];
         let receivedList = [];
-        for(let i =0; i<list.length; i++){
-            if(list[i].sender._id == req.userId){
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].sender._id == req.userId) {
                 sentList.push(list[i]);
-            }else{
+            } else {
                 receivedList.push(list[i]);
             }
         }
@@ -247,6 +247,48 @@ friendsController.listRequests = async (req, res, next) => {
     }
 }
 
+
+friendsController.friendStatus = async (req, res, next) => {
+    let friendId = req.params.friendId;
+    try {
+        let friendRecord = await FriendModel.findOne({
+            $and: [
+                {
+                    $or: [
+                        { sender: req.userId, receiver: friendId },
+                        { receiver: req.userId, sender: friendId }
+                    ]
+                },
+                { status: { $in: ["0", "1"] } }
+            ]
+        })
+
+        let status = "";
+        if (friendRecord == null) {
+            status = "not friend"
+        } if (friendRecord.status == "1") {
+            status = "friend"
+        } else {
+            if (friendRecord.sender == req.userId) {
+                status = "sent"
+            } else {
+                status = "received"
+            }
+        }
+
+        res.status(200).json({
+            data: {
+                status: status,
+            }
+        });
+
+
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
 
 
 module.exports = friendsController;
