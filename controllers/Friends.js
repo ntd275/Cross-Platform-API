@@ -16,12 +16,12 @@ friendsController.setRequest = async (req, res, next) => {
     try {
         let sender = req.userId;
         let receiver = req.body.user_id;
-        let checkBack = await FriendModel.findOne({ sender: receiver, receiver: sender });
+        let checkBack = await FriendModel.findOne({ sender: receiver, receiver: sender, status: { $in: ["0", "1"] } });
         if (checkBack != null) {
             if (checkBack.status == '0' || checkBack.status == '1') {
                 return res.status(200).json({
                     code: 200,
-                    status: 'error',
+                    newStatus: checkBack.status == '1' ? 'friend' : 'not friend',
                     success: false,
                     message: "Đối phương đã gửi lời mời kết bạn hoặc đã là bạn",
                 });
@@ -35,6 +35,7 @@ friendsController.setRequest = async (req, res, next) => {
             if (isFriend.status == '1') {
                 return res.status(200).json({
                     code: 200,
+                    newStatus: 'sent',
                     success: false,
                     message: "Đã gửi lời mời kết bạn trước đó",
                 });
@@ -45,6 +46,7 @@ friendsController.setRequest = async (req, res, next) => {
             res.status(200).json({
                 code: 200,
                 message: "Gửi lời mời kết bạn thành công",
+                newStatus: 'sent'
             });
 
         } else {
@@ -89,33 +91,39 @@ friendsController.setAccept = async (req, res, next) => {
         let receiver = req.userId;
         let sender = req.body.user_id;
 
-        let friend = await FriendModel.findOne({ sender: sender, receiver: receiver });
+        let friend = await FriendModel.findOne({ sender: sender, receiver: receiver, status: { $in: ["0", "1"] } });
 
         if (req.body.is_accept != '1' && req.body.is_accept != '2') {
             res.status(200).json({
                 code: 200,
                 message: "Không đúng yêu cầu",
                 data: friend,
-                success: false
+                success: false,
+                newStatus: friend.status
             });
+            return;
         }
         if (friend.status == '1' && req.body.is_accept == '2') {
             res.status(200).json({
                 code: 200,
                 message: "Không đúng yêu cầu",
                 data: friend,
-                success: false
-
+                success: false,
+                newStatus: 'friend'
             });
+            return;
         }
 
         friend.status = req.body.is_accept;
         friend.save();
+        let newStatus = ''
         let mes;
         if (req.body.is_accept === '1') {
             mes = "Kết bạn thành công";
+            newStatus = 'friend'
         } else {
             mes = "Từ chối thành công";
+            newStatus = 'not friend'
         }
 
         res.status(200).json({
@@ -123,7 +131,7 @@ friendsController.setAccept = async (req, res, next) => {
             message: mes,
             data: friend,
             success: true,
-
+            newStatus: newStatus
         });
     } catch (e) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
@@ -266,7 +274,7 @@ friendsController.friendStatus = async (req, res, next) => {
         let status = "";
         if (friendRecord === null) {
             status = "not friend"
-        }else if (friendRecord.status == "1") {
+        } else if (friendRecord.status == "1") {
             status = "friend"
         } else {
             if (friendRecord.sender == req.userId) {
@@ -283,6 +291,41 @@ friendsController.friendStatus = async (req, res, next) => {
         });
 
 
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+
+
+friendsController.cancelRequest = async (req, res, next) => {
+    try {
+        let sender = req.userId;
+        let receiver = req.body.user_id;
+        let checkBack = await FriendModel.findOne({ sender: receiver, receiver: sender, status: { $in: ["0", "1"] } });
+        if (checkBack != null) {
+            if (checkBack.status == '0'){
+                checkBack.status = '3';
+                checkBack.save();
+            }
+
+            return res.status(200).json({
+                code: 200,
+                newStatus: checkBack.status == '1' ? 'friend' : 'not friend',
+                success: true,
+                message: "Huỷ kết bạn thành công",
+            });
+
+
+        } else {
+            return res.status(200).json({
+                code: 200,
+                newStatus: 'not friend',
+                success: false,
+                message: "Chưa gủi lời mới kết bạn",
+            });
+        }
     } catch (e) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             message: e.message

@@ -8,6 +8,7 @@ const auth = require("../middlewares/auth");
 friendsRoutes.post("/set-request-friend", auth, friendController.setRequest);
 friendsRoutes.post("/get-requested-friend", auth, friendController.getRequest);
 friendsRoutes.post("/set-accept", auth, friendController.setAccept);
+friendsRoutes.post("/cancel-request", auth, friendController.cancelRequest);
 friendsRoutes.post("/set-remove", auth, friendController.setRemoveFriend);
 friendsRoutes.post("/list", auth, friendController.listFriends);
 friendsRoutes.get("/list_requests", auth, friendController.listRequests);

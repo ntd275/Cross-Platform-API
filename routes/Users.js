@@ -35,6 +35,12 @@ usersRoutes.get(
     asyncWrapper(usersController.show),
 );
 
+usersRoutes.get(
+    "/showbyphone/:phonenumber",
+    auth,
+    asyncWrapper(usersController.showByPhone),
+);
+
 
 usersRoutes.post("/set-block-user", auth, usersController.setBlock);
 usersRoutes.post("/set-block-diary", auth, usersController.setBlockDiary);
