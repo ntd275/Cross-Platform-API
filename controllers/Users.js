@@ -274,7 +274,7 @@ usersController.show = async (req, res, next) => {
 usersController.showByPhone = async (req, res, next) => {
     try {
         let phonenumber = req.params.phonenumer;
-
+        console.log(phonenumber)
         let user = await UserModel.findOne({ phonenumber: phonenumber }).populate('avatar').populate('cover_image');
         if (user == null) {
             return res.status(httpStatus.NOT_FOUND).json({ message: "Can not find user" });
