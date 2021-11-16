@@ -219,7 +219,7 @@ chatController.blockChat = async (req, res, next) => {
     try {
         let chat = await ChatModel.findOne({
             $and: [
-                { _id: req.params.chatId },
+                { _id: req.body.chatId },
                 { members: req.userId }
             ]
         });
@@ -239,7 +239,17 @@ chatController.blockChat = async (req, res, next) => {
                 newBlockers: newBlockers
             });
         } else {
-            return res.status(httpStatus.NOT_FOUND).json({ message: "Not found conversation!" });
+            chat = new ChatModel({
+                messsages: [],
+                members: [req.userId, req.body.friendId],
+                seens: [true, true],
+                pivots: [0, 0],
+                blockers: [req.userId],
+            });
+            await chat.save();
+            return res.status(httpStatus.OK).json({
+                newBlockers: [req.userId]
+            });
         }
     } catch (e) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
@@ -253,7 +263,7 @@ chatController.unBlockChat = async (req, res, next) => {
     try {
         let chat = await ChatModel.findOne({
             $and: [
-                { _id: req.params.chatId },
+                { _id: req.body.chatId },
                 { members: req.userId }
             ]
         });
@@ -264,7 +274,7 @@ chatController.unBlockChat = async (req, res, next) => {
                 newBlockers.splice(index, 1);
                 await ChatModel.updateOne({
                     $and: [
-                        { _id: req.params.chatId },
+                        { _id: req.body.chatId },
                         { members: req.userId }
                     ]
                 }, { blockers: newBlockers });

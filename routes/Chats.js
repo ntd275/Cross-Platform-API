@@ -22,14 +22,14 @@ chatsRoutes.get(
     asyncWrapper(chatController.getChats),
 );
 
-chatsRoutes.get(
-    "/block/:chatId",
+chatsRoutes.post(
+    "/block",
     auth,
     asyncWrapper(chatController.blockChat),
 );
 
-chatsRoutes.get(
-    "/unblock/:chatId",
+chatsRoutes.post(
+    "/unblock",
     auth,
     asyncWrapper(chatController.unBlockChat),
 );
