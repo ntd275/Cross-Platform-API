@@ -157,7 +157,7 @@ chatController.saveMessage = async (msg) => {
                 blockers: [],
             });
             needUpdate = false;
-        } else if (chat.blockers.length > 0) return null;
+        } else if (chat.blockers.length > 0 && chat.blockers.indexOf(msg.receiverId) !== -1) return null;
 
         // console.log(chat)
         let message = new MessagesModel({
