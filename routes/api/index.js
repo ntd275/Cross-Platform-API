@@ -17,7 +17,6 @@ apiRoutes.use("/postLike", postLikeRoutes);
 apiRoutes.use("/postReport", postReportRoutes);
 apiRoutes.use("/posts", postsRoutes);
 apiRoutes.use("/chats", chatsRoutes);
-apiRoutes.use("/chats", chatsRoutes);
 apiRoutes.use("/search", searchRoutes);
 
 apiRoutes.get(

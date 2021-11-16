@@ -281,7 +281,8 @@ chatController.unBlockChat = async (req, res, next) => {
             }
           
             return res.status(httpStatus.OK).json({
-                newBlockers: newBlockers
+                newBlockers: newBlockers,
+                chatId: chat._id
             });
         } else {
             return res.status(httpStatus.NOT_FOUND).json({ message: "Not found conversation!" });
