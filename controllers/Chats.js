@@ -270,12 +270,8 @@ chatController.unBlockChat = async (req, res, next) => {
             let index = newBlockers.indexOf(req.userId) ;
             if(index != -1){
                 newBlockers.splice(index, 1);
-                await ChatModel.updateOne({
-                    $and: [
-                        { _id: req.body.chatId },
-                        { members: req.userId }
-                    ]
-                }, { blockers: newBlockers });
+                chat.blockers = newBlockers;
+                await chat.save();
             }
           
             return res.status(httpStatus.OK).json({
