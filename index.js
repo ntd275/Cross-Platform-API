@@ -21,9 +21,9 @@ const { Socket } = require('dgram');
 mongoose.connect(MONGO_URI, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
-	user: 'Zalo',
-	pass: 'ZaloAdminPassword',
-	dbName: 'Zalo',
+    user: 'Zalo',
+    pass: 'ZaloAdminPassword',
+    dbName: 'Zalo',
 })
     .then(res => {
         console.log("connected to mongodb");
@@ -79,14 +79,14 @@ io.on('connection', (socket) => {
     // socket.emit('message', 'Hello world');
     socket.on('disconnect', () => {
         let userId = mapSocketIds[socket.id];
-        if(socketIds[userId]){
-            for(let i = 0; i< socketIds[userId].length; i++){
-                if(socketIds[userId][i] == socket.id){
+        if (socketIds[userId]) {
+            for (let i = 0; i < socketIds[userId].length; i++) {
+                if (socketIds[userId][i] == socket.id) {
                     socketIds[userId].splice(i, 1);
                 }
             }
         }
-   
+
         // console.log(socketIds[userId])
     });
     socket.on('chatmessage', async (msg) => {
@@ -98,14 +98,16 @@ io.on('connection', (socket) => {
                 delete msg.token;
                 msg.time = new Date();
                 msg.chatId = await chatController.saveMessage(msg);
-                if(socketIds[msg.senderId]){
-                    for(let i = 0; i< socketIds[msg.senderId].length; i++){
-                        io.to(socketIds[msg.senderId][i]).emit('message', msg);
+                if (msg.chatId !== null) {
+                    if (socketIds[msg.senderId]) {
+                        for (let i = 0; i < socketIds[msg.senderId].length; i++) {
+                            io.to(socketIds[msg.senderId][i]).emit('message', msg);
+                        }
                     }
-                }
-                if(socketIds[msg.receiverId]){
-                    for(let i = 0; i< socketIds[msg.receiverId].length; i++){
-                        io.to(socketIds[msg.receiverId][i]).emit('message', msg);
+                    if (socketIds[msg.receiverId]) {
+                        for (let i = 0; i < socketIds[msg.receiverId].length; i++) {
+                            io.to(socketIds[msg.receiverId][i]).emit('message', msg);
+                        }
                     }
                 }
             } catch (e) {

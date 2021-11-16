@@ -22,4 +22,16 @@ chatsRoutes.get(
     asyncWrapper(chatController.getChats),
 );
 
+chatsRoutes.get(
+    "/block/:chatId",
+    auth,
+    asyncWrapper(chatController.blockChat),
+);
+
+chatsRoutes.get(
+    "/unblock/:chatId",
+    auth,
+    asyncWrapper(chatController.unBlockChat),
+);
+
 module.exports = chatsRoutes;

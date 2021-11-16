@@ -21,6 +21,12 @@ const chatsSchema = new mongoose.Schema({
             ref: "Users"
         }
     ],
+    blockers: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Users"
+        }
+    ],
     seens: [
         {
             type: Boolean,

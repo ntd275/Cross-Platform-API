@@ -18,8 +18,8 @@ chatController.getMessages = async (req, res, next) => {
         if (chat !== null) {
             let pivots = chat.pivots;
             let curPivot = 0;
-            for(let i = 0; i< chat.members.length; i++){
-                if(chat.members[i] == req.userId){
+            for (let i = 0; i < chat.members.length; i++) {
+                if (chat.members[i] == req.userId) {
                     curPivot = pivots[i];
                     break;
                 }
@@ -93,17 +93,18 @@ chatController.getChats = async (req, res, next) => {
                 lastMessage: null,
                 friend: null,
                 seen: false,
+                blockers: chats[i].blockers,
             };
             let curPivot = 0;
             for (let j = 0; j < chats[i].members.length; j++) {
                 if (chats[i].members[j]._id != req.userId) {
                     res.friend = chats[i].members[j];
                     res.seen = chats[i].seens[(j + 1) % 2];
-                }else{
-                    curPivot= chats[i].pivots[j];
+                } else {
+                    curPivot = chats[i].pivots[j];
                 }
             }
-            if(curPivot >= chats[i].messsages.length){
+            if (curPivot >= chats[i].messsages.length) {
                 continue;
             }
             res.lastMessage = await MessagesModel.findOne({ _id: chats[i].messsages[chats[i].messsages.length - 1] });
@@ -145,15 +146,18 @@ chatController.saveMessage = async (msg) => {
             });
         }
 
+
+
         if (!chat) {
             chat = new ChatModel({
                 messsages: [],
                 members: [msg.senderId, msg.receiverId],
                 seens: [true, false],
                 pivots: [0, 0],
+                blockers: [],
             });
             needUpdate = false;
-        }
+        } else if (chat.blockers.length > 0) return null;
 
         // console.log(chat)
         let message = new MessagesModel({
@@ -209,5 +213,75 @@ chatController.seenMessage = async (msg) => {
         console.log(e);
     }
 }
+
+
+chatController.blockChat = async (req, res, next) => {
+    try {
+        let chat = await ChatModel.findOne({
+            $and: [
+                { _id: req.params.chatId },
+                { members: req.userId }
+            ]
+        });
+        if (chat != null) {
+            let newBlockers = chat.blockers;
+            if(newBlockers.indexOf(req.userId) == -1){
+                newBlockers.push(req.userId);
+                await ChatModel.updateOne({
+                    $and: [
+                        { _id: req.params.chatId },
+                        { members: req.userId }
+                    ]
+                }, { blockers: newBlockers });
+            }
+          
+            return res.status(httpStatus.OK).json({
+                newBlockers: newBlockers
+            });
+        } else {
+            return res.status(httpStatus.NOT_FOUND).json({ message: "Not found conversation!" });
+        }
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+
+
+chatController.unBlockChat = async (req, res, next) => {
+    try {
+        let chat = await ChatModel.findOne({
+            $and: [
+                { _id: req.params.chatId },
+                { members: req.userId }
+            ]
+        });
+        if (chat != null) {
+            let newBlockers = chat.blockers;
+            let index = newBlockers.indexOf(req.userId) ;
+            if(index != -1){
+                newBlockers.splice(index, 1);
+                await ChatModel.updateOne({
+                    $and: [
+                        { _id: req.params.chatId },
+                        { members: req.userId }
+                    ]
+                }, { blockers: newBlockers });
+            }
+          
+            return res.status(httpStatus.OK).json({
+                newBlockers: newBlockers
+            });
+        } else {
+            return res.status(httpStatus.NOT_FOUND).json({ message: "Not found conversation!" });
+        }
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+
 
 module.exports = chatController;
