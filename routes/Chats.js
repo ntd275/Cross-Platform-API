@@ -22,16 +22,4 @@ chatsRoutes.get(
     asyncWrapper(chatController.getChats),
 );
 
-chatsRoutes.post(
-    "/block",
-    auth,
-    asyncWrapper(chatController.blockChat),
-);
-
-chatsRoutes.post(
-    "/unblock",
-    auth,
-    asyncWrapper(chatController.unBlockChat),
-);
-
 module.exports = chatsRoutes;

@@ -215,56 +215,73 @@ chatController.seenMessage = async (msg) => {
 }
 
 
-chatController.blockChat = async (req, res, next) => {
+chatController.blockChat = async (msg) => {
     try {
         let chat = await ChatModel.findOne({
             $and: [
-                { _id: req.body.chatId },
-                { members: req.userId }
+                { _id: msg.chatId },
+                { members: { $all: [msg.senderId, msg.receiverId] } },
+                { members: { $size: 2 } }
             ]
         });
+        if (chat ==null){
+            chat = await ChatModel.findOne({
+                $and: [
+                    { members: { $all: [msg.senderId, msg.receiverId] } },
+                    { members: { $size: 2 } }
+                ]
+            });
+        }
+
         if (chat != null) {
             let newBlockers = chat.blockers;
-            if(newBlockers.indexOf(req.userId) == -1){
-                newBlockers.push(req.userId);
+            if(newBlockers.indexOf(msg.senderId) == -1){
+                newBlockers.push(msg.senderId);
                 chat.blockers = newBlockers;
                 await chat.save();
+                return {
+                    blockers: newBlockers,
+                    chatId: chat._id
+                }
             }
-          
-            return res.status(httpStatus.OK).json({
-                newBlockers: newBlockers,
-                chatId: chat._id
-            });
         } else {
             chat = new ChatModel({
                 messsages: [],
-                members: [req.userId, req.body.friendId],
+                members: [msg.senderId, msg.receiverId],
                 seens: [true, true],
                 pivots: [0, 0],
-                blockers: [req.userId],
+                blockers: [msg.senderId],
             });
             await chat.save();
-            return res.status(httpStatus.OK).json({
-                newBlockers: [req.userId],
+            return {
+                blockers: [msg.senderId],
                 chatId: chat._id
-            });
+            }
         }
     } catch (e) {
-        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-            message: e.message
-        });
+        console.log(e)
+        return null;
     }
 }
 
 
-chatController.unBlockChat = async (req, res, next) => {
+chatController.unBlockChat = async (msg) => {
     try {
         let chat = await ChatModel.findOne({
             $and: [
-                { _id: req.body.chatId },
-                { members: req.userId }
+                { _id: msg.chatId },
+                { members: { $all: [msg.senderId, msg.receiverId] } },
+                { members: { $size: 2 } }
             ]
         });
+        if (chat ==null){
+            chat = await ChatModel.findOne({
+                $and: [
+                    { members: { $all: [msg.senderId, msg.receiverId] } },
+                    { members: { $size: 2 } }
+                ]
+            });
+        }
         if (chat != null) {
             let newBlockers = chat.blockers;
             let index = newBlockers.indexOf(req.userId) ;
@@ -274,16 +291,16 @@ chatController.unBlockChat = async (req, res, next) => {
                 await chat.save();
             }
           
-            return res.status(httpStatus.OK).json({
-                newBlockers: newBlockers,
-            });
+            return {
+                blockers: newBlockers,
+                chatId: chat._id
+            }
         } else {
-            return res.status(httpStatus.NOT_FOUND).json({ message: "Not found conversation!" });
+            return null;
         }
     } catch (e) {
-        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-            message: e.message
-        });
+        console.log(e)
+        return null;
     }
 }
 

@@ -116,6 +116,38 @@ io.on('connection', (socket) => {
         }
     })
 
+    socket.on('blockers', async (msg) => {
+        // console.log(msg.token)
+        if (msg.token && msg.receiverId) {
+            try {
+                decoded = jwt.verify(msg.token, process.env.JWT_SECRET);
+                msg.senderId = decoded.id;
+                delete msg.token;
+                if(msg.type == "block"){
+                    msg.data = await chatController.blockChat(msg);
+                }else{
+                    msg.data = await chatController.unBlockChat(msg);
+                }
+                
+                delete msg.chatId;
+                if (msg.data !== null) {
+                    if (socketIds[msg.senderId]) {
+                        for (let i = 0; i < socketIds[msg.senderId].length; i++) {
+                            io.to(socketIds[msg.senderId][i]).emit('blockers', msg);
+                        }
+                    }
+                    if (socketIds[msg.receiverId]) {
+                        for (let i = 0; i < socketIds[msg.receiverId].length; i++) {
+                            io.to(socketIds[msg.receiverId][i]).emit('blockers', msg);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    })
+
     socket.on('seenMessage', async (msg) => {
         // console.log(msg.token)
         if (msg.token && msg.chatId) {
