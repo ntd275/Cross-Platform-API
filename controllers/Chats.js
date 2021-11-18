@@ -284,7 +284,7 @@ chatController.unBlockChat = async (msg) => {
         }
         if (chat != null) {
             let newBlockers = chat.blockers;
-            let index = newBlockers.indexOf(req.userId) ;
+            let index = newBlockers.indexOf(msg.senderId) ;
             if(index != -1){
                 newBlockers.splice(index, 1);
                 chat.blockers = newBlockers;
