@@ -239,10 +239,10 @@ chatController.blockChat = async (msg) => {
                 newBlockers.push(msg.senderId);
                 chat.blockers = newBlockers;
                 await chat.save();
-                return {
-                    blockers: newBlockers,
-                    chatId: chat._id
-                }
+            }
+            return {
+                blockers: newBlockers,
+                chatId: chat._id
             }
         } else {
             chat = new ChatModel({
