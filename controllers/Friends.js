@@ -179,6 +179,7 @@ friendsController.setRemoveFriend = async (req, res, next) => {
 
 friendsController.listFriends = async (req, res, next) => {
     try {
+        console.log(req);
         if (req.body.user_id == null) {
             let requested = await FriendModel.find({ sender: req.userId, status: "1" }).distinct('receiver')
             let accepted = await FriendModel.find({ receiver: req.userId, status: "1" }).distinct('sender')
