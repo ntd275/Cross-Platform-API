@@ -22,7 +22,7 @@ postLikeController.action = async (req, res, next) => {
         }
         post = await PostModel.findOneAndUpdate({_id: req.params.postId}, {
             like: arrLike,
-            isLike: post.like.includes(req.userId)
+            isLike: arrLike.includes(req.userId)
         }, {
             new: true,
             runValidators: true
@@ -31,7 +31,7 @@ postLikeController.action = async (req, res, next) => {
         if (!post) {
             return res.status(httpStatus.NOT_FOUND).json({message: "Can not find post"});
         }
-        
+
         return res.status(httpStatus.OK).json({
             data: post
         });

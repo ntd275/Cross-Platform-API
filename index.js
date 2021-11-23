@@ -24,6 +24,7 @@ mongoose.connect(MONGO_URI, {
     user: 'Zalo',
     pass: 'ZaloAdminPassword',
     dbName: 'Zalo',
+    useFindAndModify: false
 })
     .then(res => {
         console.log("connected to mongodb");
