@@ -342,7 +342,7 @@ chatController.recallMessage = async (msg) => {
 
         let pivot = chat.pivots[chat.members.indexOf(msg.senderId)];
         let index = msg.index + pivot;
-        if(index >= chat.message.length) return null;
+        if(index >= chat.messsages.length) return null;
 
         let message = MessagesModel.findOne({_id: chat.messsages[index]});
         if(message == null || message.isRecall) return null;
