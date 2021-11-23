@@ -21,7 +21,8 @@ postLikeController.action = async (req, res, next) => {
             arrLike = arrLikeNotContainCurrentUser;
         }
         post = await PostModel.findOneAndUpdate({_id: req.params.postId}, {
-            like: arrLike
+            like: arrLike,
+            isLike: post.like.includes(req.userId)
         }, {
             new: true,
             runValidators: true
@@ -30,7 +31,7 @@ postLikeController.action = async (req, res, next) => {
         if (!post) {
             return res.status(httpStatus.NOT_FOUND).json({message: "Can not find post"});
         }
-        post.isLike = post.like.includes(req.userId);
+        
         return res.status(httpStatus.OK).json({
             data: post
         });
