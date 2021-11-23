@@ -26,9 +26,9 @@ chatController.getMessages = async (req, res, next) => {
             }
             messsages = chat.messsages;
             messsages.splice(0, curPivot);
-            for(let i =0; i< messages.length; i++){
-                if(messages[i].isRecall){
-                    messages[i].content = 'Tin nhắn đã được thu hồi';
+            for(let i =0; i< messsages.length; i++){
+                if(messsages[i].isRecall){
+                    messsages[i].content = 'Tin nhắn đã được thu hồi';
                 }
             }
             return res.status(httpStatus.OK).json({
