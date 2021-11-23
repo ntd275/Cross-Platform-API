@@ -26,6 +26,11 @@ chatController.getMessages = async (req, res, next) => {
             }
             messsages = chat.messsages;
             messsages.splice(0, curPivot);
+            for(let i =0; i< messages.length; i++){
+                if(messages[i].isRecall){
+                    messages[i].content = 'Tin nhắn đã được thu hồi';
+                }
+            }
             return res.status(httpStatus.OK).json({
                 data: messsages
             });
@@ -303,6 +308,54 @@ chatController.unBlockChat = async (msg) => {
         return null;
     }
 }
+
+
+
+chatController.recallMessage = async (msg) => {
+    try {
+        let chat = null;
+        let needUpdate = true;
+        if (msg.chatId) {
+            chat = chat = await ChatModel.findOne({
+                $and: [
+                    { _id: msg.chatId },
+                    { members: { $all: [msg.senderId, msg.receiverId] } },
+                    { members: { $size: 2 } }
+                ]
+            });
+        }
+
+        if (!chat) {
+            chat = await ChatModel.findOne({
+                $and: [
+                    { members: { $all: [msg.senderId, msg.receiverId] } },
+                    { members: { $size: 2 } }
+                ]
+            });
+        }
+
+
+
+        if (!chat || msg.index < 0) {
+            return null;
+        }
+
+        let pivot = chat.pivots[chat.members.indexOf(msg.senderId)];
+        let index = msg.index + pivot;
+        if(index >= chat.message.length) return null;
+
+        let message = MessagesModel.findOne({_id: chat.messsages[index]});
+        if(message == null || message.isRecall) return null;
+
+        message.isRecall = true;
+        await message.save();
+        message.content = 'Tin nhắn đã được thu hồi';
+        return message;
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 
 
 module.exports = chatController;

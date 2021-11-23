@@ -5,13 +5,17 @@ const messagesSchema = new mongoose.Schema({
         type: Date,
         required: false
     },
+    isRecall: {
+        type: Boolean,
+        require: false
+    },
     senderId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Users"
     },
     receiverId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Users"
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Users"
     },
     content: {
         type: String,
