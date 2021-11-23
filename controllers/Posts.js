@@ -260,9 +260,9 @@ postsController.list = async (req, res, next) => {
             // console.log(friends)
             for (let i = 0; i < friends.length; i++) {
                 if (friends[i].sender.toString() === userId.toString()) {
-                    if(blockedDiaryList.includes(friends[i].receiver)) listIdFriends.push(friends[i].receiver);
+                    if(!blockedDiaryList.includes(friends[i].receiver)) listIdFriends.push(friends[i].receiver);
                 } else {
-                    if(blockedDiaryList.includes(friends[i].sender)) listIdFriends.push(friends[i].sender);
+                    if(!blockedDiaryList.includes(friends[i].sender)) listIdFriends.push(friends[i].sender);
                 }
             }
             listIdFriends.push(userId);
