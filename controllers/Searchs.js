@@ -67,12 +67,19 @@ searchController.search = async (req, res, next) => {
         for(let i =0; i< peopleList.length; i++){
             let friendStatus = await friendController.getFriendStatus(userId, peopleList[i]._id);
             let object = {
-                
+                gender : peopleList[i].gender,
+                blocked_inbox : peopleList[i].blocked_inbox,
+                blocked_diary : peopleList[i].blocked_diary,
+                _id : peopleList[i]._id,
+                phonenumber : peopleList[i].phonenumber,
+                username : peopleList[i].username,
+                avatar : peopleList[i].avatar,
+                cover_image : peopleList[i].avatar,
+                friendStatus : friendStatus
             }
             temp.push(object)
         }
-        // peopleList = temp;
-        console.log(temp)
+        peopleList = temp;
 
         let messages = await MessagesModel.find({
             $and: [
