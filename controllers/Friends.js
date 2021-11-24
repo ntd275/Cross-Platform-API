@@ -276,7 +276,7 @@ friendsController.getFriendStatus = async (userId, friendId) =>{
         } else if (friendRecord.status == "1") {
             status = "friend"
         } else {
-            if (friendRecord.sender == req.userId) {
+            if (friendRecord.sender == userId) {
                 status = "sent"
             } else {
                 status = "received"
