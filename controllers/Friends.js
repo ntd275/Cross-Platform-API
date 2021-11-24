@@ -256,6 +256,39 @@ friendsController.listRequests = async (req, res, next) => {
     }
 }
 
+friendsController.getFriendStatus = async (userId, friendId) =>{
+    try {
+        let friendRecord = await FriendModel.findOne({
+            $and: [
+                {
+                    $or: [
+                        { sender: userId, receiver: friendId },
+                        { receiver: userId, sender: friendId }
+                    ]
+                },
+                { status: { $in: ["0", "1"] } }
+            ]
+        })
+
+        let status = "";
+        if (friendRecord === null) {
+            status = "not friend"
+        } else if (friendRecord.status == "1") {
+            status = "friend"
+        } else {
+            if (friendRecord.sender == req.userId) {
+                status = "sent"
+            } else {
+                status = "received"
+            }
+        }
+        return status;
+
+    } catch (e) {
+        console.log(e);
+    }
+} 
+
 
 friendsController.friendStatus = async (req, res, next) => {
     let friendId = req.params.friendId;

@@ -4,6 +4,7 @@ const Messages = require("../models/Messages");
 const MessagesModel = require("../models/Messages");
 const httpStatus = require("../utils/httpStatus");
 const UserModel = require("../models/Users");
+const friendController = require("./Friends")
 const searchController = {};
 
 searchController.search = async (req, res, next) => {
@@ -47,6 +48,8 @@ searchController.search = async (req, res, next) => {
             ]
         }).populate('avatar').limit(10);
 
+        friendIds.push(userId);
+
         peopleList = await UserModel.find({
             $and: [
                 { _id: { $nin: friendIds } },
@@ -58,6 +61,10 @@ searchController.search = async (req, res, next) => {
                 }
             ]
         }).populate('avatar').limit(5);
+
+        for(let i =0; i< peopleList.size(); i++){
+            peopleList[i].friendStatus = await friendController.getFriendStatus(userId, peopleList[i]._id);
+        }
 
         let messages = await MessagesModel.find({
             $and: [
