@@ -65,8 +65,8 @@ searchController.search = async (req, res, next) => {
         let temp = [];
 
         for(let i =0; i< peopleList.length; i++){
-            temp.push(peopleList[i]);
-            temp[i].friendStatus = await friendController.getFriendStatus(userId, peopleList[i]._id);
+            let friendStatus = await friendController.getFriendStatus(userId, peopleList[i]._id);
+            temp.push({...peopleList[i], friendStatus})
         }
         peopleList = temp;
         console.log(temp)
