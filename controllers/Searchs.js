@@ -62,10 +62,13 @@ searchController.search = async (req, res, next) => {
             ]
         }).populate('avatar').limit(5);
 
-        for(let i =0; i< peopleList.length; i++){
-            peopleList[i]["friendStatus"] = await friendController.getFriendStatus(userId, peopleList[i]._id);
-            console.log( peopleList[i].friendStatus)
+        let temp = peopleList;
+
+        for(let i =0; i< temp.length; i++){
+            temp[i]["friendStatus"] = await friendController.getFriendStatus(userId, temp[i]._id);
+            console.log( temp[i].friendStatus)
         }
+        peopleList = temp;
 
         let messages = await MessagesModel.find({
             $and: [
