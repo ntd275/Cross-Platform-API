@@ -62,7 +62,7 @@ searchController.search = async (req, res, next) => {
             ]
         }).populate('avatar').limit(5);
 
-        for(let i =0; i< peopleList.size(); i++){
+        for(let i =0; i< peopleList.length; i++){
             peopleList[i].friendStatus = await friendController.getFriendStatus(userId, peopleList[i]._id);
         }
 
