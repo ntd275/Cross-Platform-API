@@ -69,7 +69,7 @@ searchController.search = async (req, res, next) => {
             temp[i].friendStatus = await friendController.getFriendStatus(userId, peopleList[i]._id);
         }
         peopleList = temp;
-        console.log(peopleList)
+        console.log(temp)
 
         let messages = await MessagesModel.find({
             $and: [
