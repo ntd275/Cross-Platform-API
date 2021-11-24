@@ -66,9 +66,12 @@ searchController.search = async (req, res, next) => {
 
         for(let i =0; i< peopleList.length; i++){
             let friendStatus = await friendController.getFriendStatus(userId, peopleList[i]._id);
-            temp.push({...peopleList[i], friendStatus})
+            let object = {
+                
+            }
+            temp.push(object)
         }
-        peopleList = temp;
+        // peopleList = temp;
         console.log(temp)
 
         let messages = await MessagesModel.find({
