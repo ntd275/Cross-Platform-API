@@ -10,6 +10,12 @@ chatsRoutes.get(
     asyncWrapper(chatController.getMessages),
 );
 
+chatsRoutes.get(
+    "/getMessagesbyfriendId/:friendId",
+    auth,
+    asyncWrapper(chatController.getMessagesByFriendId),
+);
+
 chatsRoutes.delete(
     "/deleteChat/:chatId",
     auth,

@@ -32,12 +32,63 @@ chatController.getMessages = async (req, res, next) => {
                 }
             }
             return res.status(httpStatus.OK).json({
-                data: messsages,
                 blockers: chat.blockers,
-                chatId: chat._id
+                chatId: chat._id,
+                data: messsages
             });
         } else {
             return res.status(httpStatus.NOT_FOUND).json({ message: "Not found conversation!" });
+        }
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+
+
+chatController.getMessagesByFriendId = async (req, res, next) => {
+    try {
+        let chat = await ChatModel.findOne({
+            $and: [
+                { members: { $all: [req.userId, req.params.friendId] } },
+                { members: { $size: 2 } }
+            ]
+        }).populate('messsages');
+        if (chat !== null) {
+            let pivots = chat.pivots;
+            let curPivot = 0;
+            for (let i = 0; i < chat.members.length; i++) {
+                if (chat.members[i] == req.userId) {
+                    curPivot = pivots[i];
+                    break;
+                }
+            }
+            messsages = chat.messsages;
+            messsages.splice(0, curPivot);
+            for(let i =0; i< messsages.length; i++){
+                if(messsages[i].isRecall){
+                    messsages[i].content = 'Tin nhắn đã được thu hồi';
+                }
+            }
+            return res.status(httpStatus.OK).json({
+                blockers: chat.blockers,
+                chatId: chat._id,
+                data: messsages
+            });
+        } else {
+            chat = new ChatModel({
+                messsages: [],
+                members: [msg.senderId, msg.receiverId],
+                seens: [true, true],
+                pivots: [0, 0],
+                blockers: [],
+            });
+            return res.status(httpStatus.OK).json({
+                blockers: [],
+                chatId: chat._id,
+                data: []
+            });
         }
     } catch (e) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
