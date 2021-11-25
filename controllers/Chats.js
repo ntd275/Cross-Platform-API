@@ -79,7 +79,7 @@ chatController.getMessagesByFriendId = async (req, res, next) => {
         } else {
             chat = new ChatModel({
                 messsages: [],
-                members: [msg.senderId, msg.receiverId],
+                members: [req.userId, req.params.friendId],
                 seens: [true, true],
                 pivots: [0, 0],
                 blockers: [],
