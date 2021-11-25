@@ -84,6 +84,7 @@ chatController.getMessagesByFriendId = async (req, res, next) => {
                 pivots: [0, 0],
                 blockers: [],
             });
+            await chat.save();
             return res.status(httpStatus.OK).json({
                 blockers: [],
                 chatId: chat._id,
