@@ -344,15 +344,14 @@ chatController.recallMessage = async (msg) => {
         }
 
         let pivot = chat.pivots[chat.members.indexOf(msg.senderId)];
-        console.log("pivot: " + pivot)
         let index = msg.index + pivot;
-        console.log("x")
-        console.log(index)
-        console.log(chat.messsages.length)
         if(index >= chat.messsages.length) return null;
       
         console.log("a")
         let message = await MessagesModel.findOne({_id: chat.messsages[index]});
+        console.log(message.senderId )
+        console.log(msg.senderId)
+        console.log(message.senderId !==msg.senderId)
         if(message == null || message.isRecall || message.senderId !==msg.senderId) return null;
         console.log("n")
         message.isRecall = true;
