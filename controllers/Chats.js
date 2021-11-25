@@ -345,11 +345,14 @@ chatController.recallMessage = async (msg) => {
 
         let pivot = chat.pivots[chat.members.indexOf(msg.senderId)];
         let index = msg.index + pivot;
+        console.log("x")
+        console.log(index)
         if(index >= chat.messsages.length) return null;
-
+      
+        console.log("a")
         let message = await MessagesModel.findOne({_id: chat.messsages[index]});
         if(message == null || message.isRecall || message.senderId !==msg.senderId) return null;
-
+        console.log("n")
         message.isRecall = true;
         await message.save();
         message.content = 'Tin nhắn đã được thu hồi';
