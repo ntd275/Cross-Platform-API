@@ -98,8 +98,10 @@ io.on('connection', (socket) => {
                 msg.senderId = decoded.id;
                 delete msg.token;
                 msg.time = new Date();
-                msg.chatId = await chatController.saveMessage(msg);
-                if (msg.chatId !== null) {
+                data = await chatController.saveMessage(msg);
+                if (data !== null) {
+                    msg.chatId = data.chatId;
+                    msg._id = data.msgId;
                     if (socketIds[msg.senderId]) {
                         for (let i = 0; i < socketIds[msg.senderId].length; i++) {
                             io.to(socketIds[msg.senderId][i]).emit('message', msg);
