@@ -32,7 +32,9 @@ chatController.getMessages = async (req, res, next) => {
                 }
             }
             return res.status(httpStatus.OK).json({
-                data: messsages
+                data: messsages,
+                blockers: chat.blockers,
+                chatId: chat._id
             });
         } else {
             return res.status(httpStatus.NOT_FOUND).json({ message: "Not found conversation!" });
@@ -347,11 +349,7 @@ chatController.recallMessage = async (msg) => {
         let index = msg.index + pivot;
         if(index >= chat.messsages.length) return null;
       
-        console.log("a")
         let message = await MessagesModel.findOne({_id: chat.messsages[index]});
-        console.log(message.senderId )
-        console.log(msg.senderId)
-        console.log(message.senderId !==msg.senderId)
         if(message == null || message.isRecall || message.senderId !=msg.senderId) return null;
         console.log("n")
         message.isRecall = true;
