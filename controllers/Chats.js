@@ -352,7 +352,7 @@ chatController.recallMessage = async (msg) => {
         console.log(message.senderId )
         console.log(msg.senderId)
         console.log(message.senderId !==msg.senderId)
-        if(message == null || message.isRecall || message.senderId !==msg.senderId) return null;
+        if(message == null || message.isRecall || message.senderId !=msg.senderId) return null;
         console.log("n")
         message.isRecall = true;
         await message.save();
