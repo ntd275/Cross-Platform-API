@@ -113,6 +113,9 @@ chatController.getChats = async (req, res, next) => {
                 continue;
             }
             res.lastMessage = await MessagesModel.findOne({ _id: chats[i].messsages[chats[i].messsages.length - 1] });
+            if(res.lastMessage.isRecall){
+                res.lastMessage.content = 'Tin nhắn đã được thu hồi';
+            }
             results.push(res);
         }
 
