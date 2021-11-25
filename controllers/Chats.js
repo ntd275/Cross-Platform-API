@@ -347,6 +347,7 @@ chatController.recallMessage = async (msg) => {
         let index = msg.index + pivot;
         console.log("x")
         console.log(index)
+        console.log(chat.messsages.length)
         if(index >= chat.messsages.length) return null;
       
         console.log("a")
