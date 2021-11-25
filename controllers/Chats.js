@@ -344,6 +344,7 @@ chatController.recallMessage = async (msg) => {
         }
 
         let pivot = chat.pivots[chat.members.indexOf(msg.senderId)];
+        console.log("pivot: " + pivot)
         let index = msg.index + pivot;
         console.log("x")
         console.log(index)
