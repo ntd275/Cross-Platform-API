@@ -52,7 +52,7 @@ friendsController.setRequest = async (req, res, next) => {
         } else {
             let status = 0;
             const makeFriend = new FriendModel({ sender: sender, receiver: receiver, status: status });
-            makeFriend.save();
+            await makeFriend.save();
             res.status(200).json({
                 code: 200,
                 message: "Gửi lời mời kết bạn thành công",
