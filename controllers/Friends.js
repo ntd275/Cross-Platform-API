@@ -56,7 +56,8 @@ friendsController.setRequest = async (req, res, next) => {
             res.status(200).json({
                 code: 200,
                 message: "Gửi lời mời kết bạn thành công",
-                data: makeFriend
+                data: makeFriend,
+                newStatus: 'sent'
             });
         }
     } catch (e) {
