@@ -180,7 +180,7 @@ friendsController.setRemoveFriend = async (req, res, next) => {
 
 friendsController.listFriends = async (req, res, next) => {
     try {
-        console.log(req);
+        // console.log(req);
         if (req.body.user_id == null) {
             let requested = await FriendModel.find({ sender: req.userId, status: "1" }).distinct('receiver')
             let accepted = await FriendModel.find({ receiver: req.userId, status: "1" }).distinct('sender')
@@ -338,22 +338,34 @@ friendsController.cancelRequest = async (req, res, next) => {
     try {
         let sender = req.userId;
         let receiver = req.body.user_id;
-        let checkBack = await FriendModel.findOne({ sender: receiver, receiver: sender, status: { $in: ["0", "1"] } });
+        let checkBack = await FriendModel.findOne({ sender: sender, receiver: receiver, status: { $in: ["0", "1"] } });
         if (checkBack != null) {
+            let status = checkBack.status;
             if (checkBack.status == '0'){
                 checkBack.status = '3';
-                checkBack.save();
+                await checkBack.save();
             }
 
             return res.status(200).json({
                 code: 200,
-                newStatus: checkBack.status == '1' ? 'friend' : 'not friend',
+                newStatus: status == '1' ? 'friend' : 'not friend',
                 success: true,
-                message: "Huỷ kết bạn thành công",
+                message: status == '1' ? "Không thể huỷ yêu cầu kết bạn vì đã là bạn" :"Huỷ kết bạn thành công",
             });
 
 
         } else {
+            let checkBack = await FriendModel.findOne({ sender: receiver, receiver: sender, status: { $in: ["0", "1"] } });
+            if (checkBack != null) {
+                let status = checkBack.status;
+                return res.status(200).json({
+                    code: 200,
+                    newStatus: status == '1' ? 'friend' : 'received',
+                    success: false,
+                    message: status == '1' ? "Không thể huỷ yêu cầu kết bạn vì đã là bạn" :"Bạn không phải người gửi lời mời kết bạn",
+                });
+    
+            }
             return res.status(200).json({
                 code: 200,
                 newStatus: 'not friend',
