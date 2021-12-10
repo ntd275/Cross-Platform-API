@@ -146,8 +146,8 @@ friendsController.setRemoveFriend = async (req, res, next) => {
         let receiver = req.userId;
         let sender = req.body.user_id;
 
-        let friendRc1 = await FriendModel.findOne({ sender: sender, receiver: receiver });
-        let friendRc2 = await FriendModel.findOne({ sender: receiver, receiver: sender });
+        let friendRc1 = await FriendModel.findOne({ sender: sender, receiver: receiver ,  status: '1'});
+        let friendRc2 = await FriendModel.findOne({ sender: receiver, receiver: sender, status: '1' });
         let final;
         if (friendRc1 == null) {
             final = friendRc2;
