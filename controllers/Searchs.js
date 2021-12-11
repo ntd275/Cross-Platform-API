@@ -112,6 +112,7 @@ searchController.search = async (req, res, next) => {
             message.content = messages[i].content;
             message.time = messages[i].time;
             message.chatId = messages[i].chatId;
+            message.senderId = messages[i].senderId;
             if (messages[i].senderId._id == userId) {
                 message["friend"] = messages[i].receiverId;
             } else {
